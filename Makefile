@@ -1,5 +1,3 @@
-SELF_DIR := $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
-
 export TF_VAR_DEPLOY_NAME=${DEPLOY_NAME}
 export TF_VAR_AWS_ID_LAST_FOUR=${AWS_ID_LAST_FOUR}
 export TF_VAR_DIST_DIR
