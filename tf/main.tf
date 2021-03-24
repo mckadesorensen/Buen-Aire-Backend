@@ -1,21 +1,17 @@
-terraform {
-  required_providers {
-    aws = "~> 3.19.0"
-  }
-}
+terraform {}
 
 provider "aws"{}
 
 data "aws_caller_identity" "current" {}
 
 locals {
-  prefix = "${var.DEPLOY_NAME}-buen-aire"
+  prefix = "${var.DEPLOY_NAME}-buen-aire-"
   aws_account_id       = data.aws_caller_identity.current.account_id
   aws_id_last_four = substr(data.aws_caller_identity.current.account_id, -4, 4)
 }
 
 resource "aws_s3_bucket" "tf-state-bucket" {
-  bucket = "${local.prefix}-buen-aire-tf-state-${local.aws_id_last_four}"
+  bucket = "${local.prefix}tf-state-${var.AWS_ID_LAST_FOUR}"
   versioning {
     enabled = true
   }
