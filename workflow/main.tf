@@ -40,4 +40,11 @@ resource "aws_lambda_function" "process_data" {
   role = aws_iam_role.lambda_iam_role.arn
   runtime = local.python_version
 }
+
+resource "aws_lambda_function" "egress_data" {
+  function_name = "${local.prefix}egress_data"
+  handler = "lambdas.process_data.lambda_handler"
+  role = aws_iam_role.lambda_iam_role.arn
+  runtime = local.python_version
+}
 # ------------------ End of Lambdas ------------------
