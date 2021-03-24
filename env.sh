@@ -13,6 +13,7 @@ else
     export AWS_SECRET_ACCESS_KEY
     export AWS_REGION
     export DEPLOY_NAME=$2
+    AWS_ID_LAST_FOUR=${AWS_ACCOUNT_ID: -4:4}
     AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
 
     echo " environment vars:"
@@ -20,5 +21,6 @@ else
     echo "  AWS_REGION:           $AWS_REGION"
     echo "  DEPLOY_NAME:          $DEPLOY_NAME"
     echo "  AWS_ACCOUNT_ID:       $AWS_ACCOUNT_ID"
+    echo "  AWS_ID_LAST_FOUR:     $AWS_ID_LAST_FOUR"
 
 fi
