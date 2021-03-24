@@ -1,11 +1,16 @@
-export TF_VAR_DEPLOY_NAME=${DEPLOY_NAME}
+SELF_DIR := $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 
+export TF_VAR_DEPLOY_NAME=${DEPLOY_NAME}
+export TF_VAR_AWS_ID_LAST_FOUR=${AWS_ID_LAST_FOUR}
+export TF_VAR_DIST_DIR
+
+.DEFAULT_GOAL := all
 .SILENT:
 .ONESHELL:
-.PHONY:
+.PHONY: all workflow
 
 
-# Docker Commands
+# ----------------- Start of Docker Commands -----------------
 image: Build/buen_aire_backend.Dockerfile
 	cd Build && \
 	docker build -f buen_aire_backend.Dockerfile -t buen_aire_backend .
@@ -17,27 +22,38 @@ container-shell:
 		-v ~/.aws:/.aws \
 		buen_aire_backend
 
-# Terraform Commands
+# ----------------- Start of Docker Commands -----------------
+
+
+# ----------------- Start of Terraform Commands -----------------
 # TODO: Make terraform commands and apply vars to variables.tf
 terraform-init:
 	cd tf
 	rm -rf terraform.tfstate.d
-	terraform init
+	terraform init -reconfigure -input=false
 	terraform workspace new "buen-aire" 2>/dev/null || terraform workspace select "buen-aire"
 
 tf: terraform-init
 	cd tf
 	terraform import -input=false aws_s3_bucket.backend-tf-state-bucket ${DEPLOY_NAME}-buen-aire-tf-state-${AWS_ID_LAST_FOUR} 2>/dev/null || true
 	terraform import -input=false aws_dynamodb_table.backend-tf-locks-table ${DEPLOY_NAME}-buen-aire-tf-locks 2>/dev/null || true
-	terraform apply -input=false -auto-approve -no-color
+	terraform apply -input=false -auto-approve
 
-init:
+workflow-init:
 	cd workflow
-	terraform init reconfigure -input=false -no-color \
+	rm -f .terraform/environment
+	terraform init -reconfigure -input=false \
 		-backend-config "region=${AWS_REGION}" \
 		-backend-config "bucket=${DEPLOY_NAME}-buen-aire-tf-state-${AWS_ID_LAST_FOUR}" \
-		-backed-config "key=workflow/terraform.tfstate" \
+		-backend-config "key=workflow/terraform.tfstate" \
 		-backend-config "dynamodb_table=${DEPLOY_NAME}-buen-aire-tf-locks"
-	terraform workspace new ${DEPLOY_NAME} 2>/dev/null || terraform workspace select ${DEPLOY_NAME}
+
+workflow: workflow-init
+	cd workflow
+	terraform apply  -input=false -auto-approve
 
 # TODO: Zip the lambdas and upload them to s3
+
+all: tf workflow
+
+# ----------------- End of Terraform Commands -----------------
