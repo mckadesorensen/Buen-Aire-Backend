@@ -53,6 +53,12 @@ resource "aws_lambda_function" "process_data" {
   handler = "workflow.lambdas.process_data.lambda_handler"
   role = aws_iam_role.lambda_iam_role.arn
   runtime = local.python_version
+
+  environment {
+    variables = {
+      S3_DATA_BUCKET = aws_s3_bucket.data-storage-bucket.bucket
+    }
+  }
 }
 
 resource "aws_lambda_function" "egress_data" {
@@ -61,6 +67,12 @@ resource "aws_lambda_function" "egress_data" {
   handler = "workflow.lambdas.egress_data.lambda_handler"
   role = aws_iam_role.lambda_iam_role.arn
   runtime = local.python_version
+
+  environment {
+    variables = {
+      S3_DATA_BUCKET = aws_s3_bucket.data-storage-bucket.bucket
+    }
+  }
 }
 # ------------------ End of Lambdas ------------------
 
