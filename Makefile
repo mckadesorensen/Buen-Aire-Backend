@@ -1,7 +1,7 @@
 export TF_VAR_DEPLOY_NAME=${DEPLOY_NAME}
 export TF_VAR_AWS_ID_LAST_FOUR=${AWS_ID_LAST_FOUR}
 
-.DEFAULT_GOAL := all
+.DEFAULT_GOAL := workflow
 .SILENT:
 .ONESHELL:
 .PHONY: all workflow
@@ -31,6 +31,7 @@ upload-lambdas:
 terraform-init:
 	cd tf
 	rm -rf terraform.tfstate.d
+	rm -f .terraform/environment
 	terraform init -reconfigure -input=false
 	terraform workspace new "buen-aire" 2>/dev/null || terraform workspace select "buen-aire"
 
@@ -52,7 +53,7 @@ workflow-init:
 
 workflow: upload-lambdas workflow-init
 	cd workflow
-	terraform apply  -input=false -auto-approve
+	terraform apply -input=false -auto-approve
 
 # TODO: Zip the lambdas and upload them to s3
 
