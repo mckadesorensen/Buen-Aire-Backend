@@ -5,3 +5,7 @@ variable "DEPLOY_NAME" {
 variable "AWS_ID_LAST_FOUR" {
   type = string
 }
+
+variable "DIST_DIR" {
+  type = string
+}

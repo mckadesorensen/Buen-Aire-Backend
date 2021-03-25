@@ -47,23 +47,19 @@ resource "aws_s3_bucket" "data-storage-bucket" {
 
 
 # ------------------ Start of Lambdas ------------------
-# TODO: Finish setting up the Lambdas
-//resource "aws_lambda_function" "process_data" {
-//  s3_bucket =  local.zipped_lambda_bucket
-//  s3_key = local.zipped_lambdas
-//  function_name = "${local.prefix}process_data"
-//  handler = "workflow.lambdas.process_data.lambda_handler"
-//  role = aws_iam_role.lambda_iam_role.arn
-//  runtime = local.python_version
-//}
-//
-//resource "aws_lambda_function" "egress_data" {
-//  s3_bucket =  local.zipped_lambda_bucket
-//  s3_key = local.zipped_lambdas
-//
-//  function_name = "${local.prefix}egress_data"
-//  handler = "workflow.lambdas.egress_data.lambda_handler"
-//  role = aws_iam_role.lambda_iam_role.arn
-//  runtime = local.python_version
-//}
+resource "aws_lambda_function" "process_data" {
+  filename = "${var.DIST_DIR}/${local.zipped_lambdas}"
+  function_name = "${local.prefix}process_data"
+  handler = "workflow.lambdas.process_data.lambda_handler"
+  role = aws_iam_role.lambda_iam_role.arn
+  runtime = local.python_version
+}
+
+resource "aws_lambda_function" "egress_data" {
+  filename = "${var.DIST_DIR}/${local.zipped_lambdas}"
+  function_name = "${local.prefix}egress_data"
+  handler = "workflow.lambdas.egress_data.lambda_handler"
+  role = aws_iam_role.lambda_iam_role.arn
+  runtime = local.python_version
+}
 # ------------------ End of Lambdas ------------------
