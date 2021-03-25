@@ -1,6 +1,5 @@
 export TF_VAR_DEPLOY_NAME=${DEPLOY_NAME}
 export TF_VAR_AWS_ID_LAST_FOUR=${AWS_ID_LAST_FOUR}
-export TF_VAR_DIST_DIR
 
 .DEFAULT_GOAL := all
 .SILENT:
@@ -25,6 +24,10 @@ container-shell:
 
 # ----------------- Start of Terraform Commands -----------------
 # TODO: Make terraform commands and apply vars to variables.tf
+upload-lambdas:
+	zip lambdas.zip workflow/lambdas/*.py
+	aws --profile ${AWS_PROFILE} s3 cp ${PWD}/lambdas.zip s3://${DEPLOY_NAME}-buen-aire-lambda-code-${AWS_ID_LAST_FOUR}/lambdas.zip
+
 terraform-init:
 	cd tf
 	rm -rf terraform.tfstate.d
@@ -45,8 +48,9 @@ workflow-init:
 		-backend-config "bucket=${DEPLOY_NAME}-buen-aire-tf-state-${AWS_ID_LAST_FOUR}" \
 		-backend-config "key=workflow/terraform.tfstate" \
 		-backend-config "dynamodb_table=${DEPLOY_NAME}-buen-aire-tf-locks"
+	terraform workspace new ${DEPLOY_NAME} 2>/dev/null || terraform workspace select ${DEPLOY_NAME}
 
-workflow: workflow-init
+workflow: upload-lambdas workflow-init
 	cd workflow
 	terraform apply  -input=false -auto-approve
 
