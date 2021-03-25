@@ -47,6 +47,7 @@ resource "aws_s3_bucket" "data-storage-bucket" {
 
 
 # ------------------ Start of Lambdas ------------------
+# TODO: Finish setting up the Lambdas
 //resource "aws_lambda_function" "process_data" {
 //  s3_bucket =  local.zipped_lambda_bucket
 //  s3_key = local.zipped_lambdas
