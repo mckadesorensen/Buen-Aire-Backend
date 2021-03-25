@@ -23,7 +23,7 @@ resource "aws_s3_bucket" "tf-state-bucket" {
 resource "aws_dynamodb_table" "tf-locks-table" {
   hash_key = "LockID"
   billing_mode = "PAY_PER_REQUEST"
-  name = "${local.prefix}-buen-aire-tf-locks"
+  name = "${local.prefix}buen-aire-tf-locks"
   attribute {
     name = "LockID"
     type = "S"
