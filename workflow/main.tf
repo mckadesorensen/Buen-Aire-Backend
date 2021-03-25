@@ -33,6 +33,17 @@ EOF
 
 # ------------------ End of IAM ------------------
 
+# ------------------ Start of S3 Bucket ------------------
+resource "aws_s3_bucket" "data-storage-bucket" {
+  bucket = "${local.prefix}data-storage-${var.AWS_ID_LAST_FOUR}"
+  versioning {
+    enabled = true
+  }
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+# ------------------ End of S3 Bucket ------------------
 
 
 # ------------------ Start of Lambdas ------------------
