@@ -22,7 +22,7 @@ def store_in_s3():
     file_name = "test.json"
 
     s3 = boto3.resource("s3")
-    s3.Bucket(bucket).put_object(Key=file_name, Body=data)
+    s3.Bucket(bucket).put_object(Key=file_name, Body=encoded_data)
 
 
 def get_data_from_purple_air():
