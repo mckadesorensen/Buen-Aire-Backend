@@ -115,6 +115,7 @@ resource "aws_lambda_function" "egress_data" {
   environment {
     variables = {
       S3_DATA_BUCKET = aws_s3_bucket.data-storage-bucket.bucket
+      BUCKET_REGION = aws_s3_bucket.data-storage-bucket.region
     }
   }
 }
