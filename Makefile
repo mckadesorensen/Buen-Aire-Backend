@@ -26,10 +26,22 @@ container-shell:
 
 
 # ----------------- Start of Terraform Commands -----------------
-# TODO: Make terraform commands and apply vars to variables.tf
-upload-lambdas:
-	zip lambdas.zip workflow/lambdas/*.py
-	aws --profile ${AWS_PROFILE} s3 cp ${PWD}/lambdas.zip s3://${DEPLOY_NAME}-buen-aire-lambda-code-${AWS_ID_LAST_FOUR}/lambdas.zip
+${SELF_DIR}/process_lambda.zip: ${SELF_DIR} workflow/lambdas/process_data.py
+	cd workflow/lambdas
+	zip ${SELF_DIR}/process_lambda.zip process_data.py
+
+${SELF_DIR}/egress_lambda.zip: ${SELF_DIR} workflow/lambdas/egress_data.py
+	cd workflow/lambdas
+	zip ${SELF_DIR}/egress_lambda.zip egress_data.py
+
+${SELF_DIR}/lambda_dependencies_layer.zip: ${SELF_DIR} Build/requirements.txt
+	mkdir -p ${SELF_DIR}/python
+	cd ${SELF_DIR}/python
+	pip3 install -r ${SELF_DIR}/Build/requirements.txt --target .
+	cd ..
+	zip -r ${SELF_DIR}/lambda_dependencies_layer.zip python/*
+
+artifacts: ${SELF_DIR}/lambda_dependencies_layer.zip ${SELF_DIR}/process_lambda.zip ${SELF_DIR}/egress_lambda.zip
 
 terraform-init:
 	cd tf
@@ -54,12 +66,9 @@ workflow-init:
 		-backend-config "dynamodb_table=${DEPLOY_NAME}-buen-aire-tf-locks"
 	terraform workspace new ${DEPLOY_NAME} 2>/dev/null || terraform workspace select ${DEPLOY_NAME}
 
-workflow: upload-lambdas workflow-init
+workflow: artifacts workflow-init
 	cd workflow
 	terraform apply -input=false -auto-approve
 
-# TODO: Zip the lambdas and upload them to s3
-
 all: tf workflow
-
 # ----------------- End of Terraform Commands -----------------
