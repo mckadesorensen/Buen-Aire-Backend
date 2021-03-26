@@ -8,7 +8,6 @@ locals {
   prefix = "${var.DEPLOY_NAME}-buen-aire-"
   python_version = "python3.8"
   zipped_lambdas = "lambdas.zip"
-  zipped_lambda_bucket = "s3://${var.DEPLOY_NAME}-buen-aire-lambda-code-${var.AWS_ID_LAST_FOUR}"
 }
 
 # ------------------ Start of IAM ------------------
