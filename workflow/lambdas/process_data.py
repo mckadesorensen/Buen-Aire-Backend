@@ -18,6 +18,7 @@ def store_in_s3():
     uaf_smoke_data = "TODO"
     data = format_data(purple_air_data, uaf_smoke_data)
     encoded_data = data.encode("utf-8")
+
     bucket = os.getenv("S3_DATA_BUCKET")
     file_name = "test.json"
 
@@ -27,8 +28,7 @@ def store_in_s3():
 
 def get_data_from_purple_air():
     p = SensorList()
-    df = p.to_dataframe(sensor_filter='all',
-                        channel='parent')
+    df = p.to_dataframe(sensor_filter='all', channel='parent')
     return df.to_json(orient="records")
 
 
