@@ -6,8 +6,7 @@ provider "aws" {}
 
 locals {
   prefix = "${var.DEPLOY_NAME}-buen-aire-"
-  python_version = "python3.8"
-  zipped_lambdas = "lambdas.zip"
+  python_version = "python3.7"
 }
 
 # ------------------ Start of IAM ------------------
@@ -76,12 +75,25 @@ resource "aws_s3_bucket" "data-storage-bucket" {
 
 
 # ------------------ Start of Lambdas ------------------
+resource "aws_lambda_layer_version" "lambda_dependencies" {
+  filename =   "${var.DIST_DIR}/lambda_dependencies_layer.zip"
+  layer_name = "${local.prefix}lambda_dependencies"
+
+  compatible_runtimes = [
+    local.python_version
+  ]
+}
+
 resource "aws_lambda_function" "process_data" {
-  filename = "${var.DIST_DIR}/${local.zipped_lambdas}"
+  filename = "${var.DIST_DIR}/process_lambda.zip"
   function_name = "${local.prefix}process_data"
-  handler = "workflow.lambdas.process_data.lambda_handler"
+  handler = "process_data.lambda_handler"
   role = aws_iam_role.lambda_iam_role.arn
   runtime = local.python_version
+  layers = [aws_lambda_layer_version.lambda_dependencies.arn]
+
+  memory_size = 512
+  timeout = 60
 
   environment {
     variables = {
@@ -91,15 +103,19 @@ resource "aws_lambda_function" "process_data" {
 }
 
 resource "aws_lambda_function" "egress_data" {
-  filename = "${var.DIST_DIR}/${local.zipped_lambdas}"
+  filename = "${var.DIST_DIR}/egress_lambda.zip"
   function_name = "${local.prefix}egress_data"
-  handler = "workflow.lambdas.egress_data.lambda_handler"
+  handler = "egress_data.lambda_handler"
   role = aws_iam_role.lambda_iam_role.arn
   runtime = local.python_version
+  layers = [aws_lambda_layer_version.lambda_dependencies.arn]
+
+  timeout = 10
 
   environment {
     variables = {
       S3_DATA_BUCKET = aws_s3_bucket.data-storage-bucket.bucket
+      BUCKET_REGION = aws_s3_bucket.data-storage-bucket.region
     }
   }
 }

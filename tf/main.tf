@@ -20,16 +20,6 @@ resource "aws_s3_bucket" "tf-state-bucket" {
   }
 }
 
-resource "aws_s3_bucket" "lambda-code-bucket" {
-  bucket = "${local.prefix}lambda-code-${var.AWS_ID_LAST_FOUR}"
-  versioning {
-    enabled = true
-  }
-  lifecycle {
-    prevent_destroy = true
-  }
-}
-
 resource "aws_dynamodb_table" "tf-locks-table" {
   hash_key = "LockID"
   billing_mode = "PAY_PER_REQUEST"
