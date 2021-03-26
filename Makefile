@@ -21,11 +21,10 @@ container-shell:
 		-v ${PWD}:/Buen-Aire-Backend \
 		-v ~/.aws:/.aws \
 		buen_aire_backend
+# ----------------- End of Docker Commands -----------------
 
-# ----------------- Start of Docker Commands -----------------
 
-
-# ----------------- Start of Terraform Commands -----------------
+# ----------------- Start of Terminal Commands -----------------
 ${SELF_DIR}/process_lambda.zip: ${SELF_DIR} workflow/lambdas/process_data.py
 	cd workflow/lambdas
 	zip ${SELF_DIR}/process_lambda.zip process_data.py
@@ -43,6 +42,12 @@ ${SELF_DIR}/lambda_dependencies_layer.zip: ${SELF_DIR} Build/requirements.txt
 
 artifacts: ${SELF_DIR}/lambda_dependencies_layer.zip ${SELF_DIR}/process_lambda.zip ${SELF_DIR}/egress_lambda.zip
 
+clean-up:
+	rm ${SELF_DIR}/*.zip
+# ----------------- End of Terminal Commands -----------------
+
+
+# ----------------- Start of Terraform Commands -----------------
 terraform-init:
 	cd tf
 	rm -rf terraform.tfstate.d
@@ -69,6 +74,8 @@ workflow-init:
 workflow: artifacts workflow-init
 	cd workflow
 	terraform apply -input=false -auto-approve
+	cd ..
+	make clean-up
 
 all: tf workflow
 # ----------------- End of Terraform Commands -----------------
