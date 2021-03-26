@@ -31,6 +31,36 @@ resource "aws_iam_role" "lambda_iam_role" {
 EOF
 }
 
+resource "aws_iam_policy" "lambda-policy" {
+  name = "${local.prefix}lambda-policy"
+  policy = <<EOF
+{
+"Version": "2012-10-17",
+"Statement": [
+  {
+    "Effect": "Allow",
+    "Action": [
+      "logs:*"
+        ],
+    "Resource": "arn:aws:logs:*:*:*"
+  },
+  {
+    "Effect": "Allow",
+    "Action": [
+      "s3:*"
+    ],
+    "Resource": "arn:aws:s3:::*"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "lambda-policy-attach" {
+  role       = aws_iam_role.lambda_iam_role.name
+  policy_arn = aws_iam_policy.lambda-policy.arn
+}
+
 # ------------------ End of IAM ------------------
 
 # ------------------ Start of S3 Bucket ------------------
