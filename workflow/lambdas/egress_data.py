@@ -9,7 +9,8 @@ def create_recent_data_url():
     files = s3_client.list_objects_v2(Bucket=bucket)["Contents"]
 
     # TODO: Put the correct file name in place
-    url = f"https://{bucket}.s3-{region}.amazonaws.com/{files[0]}"
+    url = f"https://{bucket}.s3-{region}.amazonaws.com/{files[0]['Key']}"
+    print(url)
 
 
 def lambda_handler(event, context):
