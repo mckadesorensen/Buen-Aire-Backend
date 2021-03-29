@@ -3,4 +3,5 @@
 ## TODO: How to use Docker
 
 ## TODO: How to deploy into AWS
-![deployment_buen_air](https://user-images.githubusercontent.com/49543713/112902271-59bb3c80-9092-11eb-8f6e-4d227244802a.png)
+![CICD_buen_air_transparent](https://user-images.githubusercontent.com/49543713/112902456-9dae4180-9092-11eb-963f-e40099f04a67.png)
+
