@@ -11,10 +11,9 @@ s3 = boto3.resource("s3")
 
 # --------------- Start of s3 formatting functions ---------------
 # TODO: Get with team and figure out how we want to properly format this data
-def format_data(purple_air, uaf_smoke):
+def format_data(purple_air):
     return dumps({
-        "PurpleAir": purple_air,
-        "UAFSmoke": uaf_smoke
+        "PurpleAir": purple_air
     })
 # --------------- End of s3 formatting functions ---------------
 
@@ -37,11 +36,6 @@ def store_file_in_s3(data):
 
 
 # --------------- Start of gathering data functions ---------------
-# TODO: Setup to get UAF Smoke data
-def get_data_from_uaf_smoke():
-    return "UAF Smoke data"
-
-
 def get_data_from_purple_air():
     p = SensorList()
     df = p.to_dataframe(sensor_filter='all', channel='parent')
@@ -50,8 +44,7 @@ def get_data_from_purple_air():
 
 def pull_data_from_all_sources():
     purple_air_data = get_data_from_purple_air()
-    uaf_smoke_data = get_data_from_uaf_smoke()
-    encoded_data = format_data(purple_air_data, uaf_smoke_data).encode("utf-8")
+    encoded_data = format_data(purple_air_data).encode("utf-8")
     store_file_in_s3(encoded_data)
 # --------------- End of gathering data functions ---------------
 

@@ -124,7 +124,7 @@ resource "aws_lambda_function" "egress_data" {
 # ------------------ Start of API Gateway ------------------
 # TODO: Make this do something
 resource "aws_api_gateway_rest_api" "api" {
-  name = "${local.prefix}-api-gateway"
+  name = "${local.prefix}api-gateway"
   description = "Proxy for handling request to the Buen Aire API"
 }
 
@@ -149,11 +149,13 @@ resource "aws_api_gateway_integration" "integration" {
   http_method = aws_api_gateway_method.method.http_method
   integration_http_method = "ANY"
   type = "HTTP_PROXY"
-  uri = "http://your.domain.com/{proxy}"
-
-  request_parameters =  {
-    "integration.request.path.proxy" = "method.request.path.proxy"
-  }
+  uri = aws_lambda_function.egress_data.invoke_arn
 }
 
+resource "aws_lambda_permission" "api_permissions" {
+  statement_id  = "AllowAPIgatewayInvokation"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.egress_data.function_name
+  principal     = "apigateway.amazonaws.com"
+}
 # ------------------ End of API Gateway ------------------
