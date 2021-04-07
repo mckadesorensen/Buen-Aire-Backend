@@ -1,5 +1,6 @@
 import boto3
 import os
+import json
 
 
 # TODO: Set up with API Gateway
@@ -7,11 +8,17 @@ def create_recent_data_url():
     bucket, region = os.getenv("S3_DATA_BUCKET"), os.getenv("BUCKET_REGION")
     s3_client = boto3.client('s3')
     files = s3_client.list_objects_v2(Bucket=bucket)["Contents"]
+    print(files)
 
-    # TODO: Put the correct file name in place
-    url = f"https://{bucket}.s3-{region}.amazonaws.com/{files[0]['Key']}"
-    print(url)
+    for file in files:
+        data = s3_client.get_object(Bucket=bucket, Key=file.get('Key'))
+        contents = data['Body'].read()
+
+    return contents.decode('UTF-8')
 
 
 def lambda_handler(event, context):
-    create_recent_data_url()
+    return {
+        "statusCode": 200,
+        "body": json.dumps(create_recent_data_url())
+    }
