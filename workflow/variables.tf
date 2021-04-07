@@ -9,3 +9,12 @@ variable "AWS_ID_LAST_FOUR" {
 variable "DIST_DIR" {
   type = string
 }
+
+variable "REGION" {
+  type = string
+  default = "us-west-2"
+}
+
+variable "ACCOUNT" {
+  type = string
+}
