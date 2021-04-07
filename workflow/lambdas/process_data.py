@@ -1,5 +1,5 @@
 # TODO: Finish Process data lambda
-from json import dumps
+from json import dumps, loads
 import os
 
 import boto3
@@ -10,6 +10,23 @@ s3 = boto3.resource("s3")
 
 
 # --------------- Start of s3 formatting functions ---------------
+
+# 51.963121, 171.190658    :   54.138603, -128.634942
+# 74.286091, 178.035186    :   74.046288, -131.339815
+def grab_ak_data(purple_air_data):
+    ak_data = []
+    print(len(purple_air_data))
+    for info in purple_air_data:
+        try:
+            if 52 <= info['lat'] <= 75 and -175 <= info['lon'] <= -128:
+                ak_data.append(info)
+        except TypeError as e:
+            print(e)
+
+    print(len(ak_data))
+    return ak_data
+
+
 # TODO: Get with team and figure out how we want to properly format this data
 def format_data(purple_air):
     return dumps({
@@ -43,8 +60,9 @@ def get_data_from_purple_air():
 
 
 def pull_data_from_all_sources():
-    purple_air_data = get_data_from_purple_air()
-    encoded_data = format_data(purple_air_data).encode("utf-8")
+    purple_air_data = loads(get_data_from_purple_air())
+    ak_purple_air_data = grab_ak_data(purple_air_data)
+    encoded_data = format_data(ak_purple_air_data).encode("utf-8")
     store_file_in_s3(encoded_data)
 # --------------- End of gathering data functions ---------------
 
