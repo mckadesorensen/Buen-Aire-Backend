@@ -3,6 +3,8 @@ SELF_DIR := $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 export TF_VAR_DEPLOY_NAME=${DEPLOY_NAME}
 export TF_VAR_AWS_ID_LAST_FOUR=${AWS_ID_LAST_FOUR}
 export TF_VAR_DIST_DIR=${SELF_DIR}
+export TF_VAR_REGION=${AWS_REGION}
+export TF_VAR_ACCOUNT=${AWS_AWS_ACCOUNT_ID}
 
 .DEFAULT_GOAL := workflow
 .SILENT:
