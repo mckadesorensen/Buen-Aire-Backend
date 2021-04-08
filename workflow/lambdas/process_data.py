@@ -15,7 +15,6 @@ s3 = boto3.resource("s3")
 # 74.286091, 178.035186    :   74.046288, -131.339815
 def grab_ak_data(purple_air_data):
     ak_data = []
-    print(len(purple_air_data))
     for info in purple_air_data:
         try:
             if 52 <= info['lat'] <= 75 and -175 <= info['lon'] <= -128:
@@ -23,7 +22,6 @@ def grab_ak_data(purple_air_data):
         except TypeError as e:
             print(e)
 
-    print(len(ak_data))
     return ak_data
 
 
