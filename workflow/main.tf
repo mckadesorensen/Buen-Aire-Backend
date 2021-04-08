@@ -48,7 +48,15 @@ resource "aws_iam_policy" "lambda-policy" {
       "s3:*"
     ],
     "Resource": "arn:aws:s3:::*"
-    }
+  },
+  {
+    "Effect": "Allow",
+    "Action": [
+      "execute-api:Invoke",
+      "execute-api:ManageConnections"
+    ],
+    "Resource": "arn:aws:execute-api:*:*:*"
+  }
   ]
 }
 EOF
@@ -72,7 +80,6 @@ resource "aws_s3_bucket" "data-storage-bucket" {
   }
 }
 # ------------------ End of S3 Bucket ------------------
-
 
 # ------------------ Start of Lambdas ------------------
 resource "aws_lambda_layer_version" "lambda_dependencies" {
@@ -121,17 +128,39 @@ resource "aws_lambda_function" "egress_data" {
 }
 # ------------------ End of Lambdas ------------------
 
+# ------------------ Start of Cloud Watch ------------------
+resource "aws_cloudwatch_event_rule" "process-data-timer" {
+    name = "${local.prefix}process-data-timer"
+    description = "Activates the ingest lambda every 10 minutes"
+    schedule_expression = "rate(10 minutes)"
+}
+
+resource "aws_cloudwatch_event_target" "check_foo_every_five_minutes" {
+    rule = aws_cloudwatch_event_rule.process-data-timer.name
+    target_id = "${local.prefix}process_data"
+    arn = aws_lambda_function.process_data.arn
+}
+
+resource "aws_lambda_permission" "allow_cloudwatch_to_check_process_data" {
+    statement_id = "AllowExecutionFromCloudWatch"
+    action = "lambda:InvokeFunction"
+    function_name = aws_lambda_function.process_data.function_name
+    principal = "events.amazonaws.com"
+    source_arn = aws_cloudwatch_event_rule.process-data-timer.arn
+}
+# ------------------ End of Cloud Watch ------------------
+
 # ------------------ Start of API Gateway ------------------
 # TODO: Make this do something
 resource "aws_api_gateway_rest_api" "api" {
-  name = "${local.prefix}-api-gateway"
+  name = "${local.prefix}api-gateway"
   description = "Proxy for handling request to the Buen Aire API"
 }
 
 resource "aws_api_gateway_resource" "resource" {
   rest_api_id = aws_api_gateway_rest_api.api.id
   parent_id   = aws_api_gateway_rest_api.api.root_resource_id
-  path_part   = "{proxy+}"
+  path_part   = "egress-data"
 }
 
 resource "aws_api_gateway_method" "method" {
@@ -143,17 +172,22 @@ resource "aws_api_gateway_method" "method" {
     "method.request.path.proxy" = true
   }
 }
+
 resource "aws_api_gateway_integration" "integration" {
   rest_api_id = aws_api_gateway_rest_api.api.id
   resource_id = aws_api_gateway_resource.resource.id
   http_method = aws_api_gateway_method.method.http_method
   integration_http_method = "ANY"
-  type = "HTTP_PROXY"
-  uri = "http://your.domain.com/{proxy}"
-
-  request_parameters =  {
-    "integration.request.path.proxy" = "method.request.path.proxy"
-  }
+  type = "AWS_PROXY"
+  uri = aws_lambda_function.egress_data.invoke_arn
 }
 
+resource "aws_lambda_permission" "api_permissions" {
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.egress_data.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "arn:aws:execute-api:${var.REGION}:${var.ACCOUNT}:${aws_api_gateway_rest_api.api.id}/*/${aws_api_gateway_method.method.http_method}${aws_api_gateway_resource.resource.path}"
+}
 # ------------------ End of API Gateway ------------------
