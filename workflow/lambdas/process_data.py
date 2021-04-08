@@ -11,8 +11,6 @@ s3 = boto3.resource("s3")
 
 # --------------- Start of s3 formatting functions ---------------
 
-# 51.963121, 171.190658    :   54.138603, -128.634942
-# 74.286091, 178.035186    :   74.046288, -131.339815
 def grab_ak_data(purple_air_data):
     ak_data = []
     for info in purple_air_data:
