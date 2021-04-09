@@ -1,6 +1,5 @@
 import boto3
 import os
-import json
 import logging
 
 
@@ -22,6 +21,8 @@ def create_recent_data_url():
 
 
 def lambda_handler(event, context):
+    logging.info(f"Event: {event}")
+    logging.info(f"Context: {context}")
     return {
         "statusCode": 200,
         "body": create_recent_data_url()
