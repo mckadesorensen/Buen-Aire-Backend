@@ -3,7 +3,6 @@ import os
 import json
 
 
-# TODO: Set up with API Gateway
 def create_recent_data_url():
     bucket, region = os.getenv("S3_DATA_BUCKET"), os.getenv("BUCKET_REGION")
     s3_client = boto3.client('s3')
@@ -20,5 +19,5 @@ def create_recent_data_url():
 def lambda_handler(event, context):
     return {
         "statusCode": 200,
-        "body": json.dumps(create_recent_data_url())
+        "body": create_recent_data_url()
     }
