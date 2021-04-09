@@ -19,7 +19,7 @@ def grab_ak_data(purple_air_data):
             if 52 <= info['lat'] <= 75 and -175 <= info['lon'] <= -128:
                 ak_data.append(info)
         except TypeError as e:
-            logger.info(f"The falling data: {info}, gave the following error {e}")
+            logger.info(f"The following data: {info}, gave the following error {e}")
 
     return ak_data
 
