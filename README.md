@@ -2,7 +2,7 @@
 This repo contains the code for the Buen Aire backend
 ## Table of Contents: 
 * [Buen-Aire-Backend required installations]()
-* Buen-Aire-Frontend - The frontend for Buen Aire
+* [Buen-Aire-Frontend Repo]((https://github.com/mckadesorensen/Buen-Aire-Frontend)
   * [Github Repo](https://github.com/mckadesorensen/Buen-Aire-Frontend)
 * [System Architecture](#system-architecture) - Components of Buen-Aire-Backend
 * [Deploying The Backend](#Deploying-The-Buen-Aie)
@@ -49,7 +49,7 @@ bash-4.2$
 source env.sh aws_profile deploy_name
 ```
 
-4. First time deploying a stack (A backend under the name of `deploy_name` in a particular `aws_profile`)
+4. First time deploying a stack (In this case, a stack is a backend with resources that have prefix of `deploy_name` in a particular `aws_profile`)
 ```
 make all
 ```
