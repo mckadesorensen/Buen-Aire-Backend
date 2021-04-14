@@ -18,10 +18,11 @@ This repo contains the code for the Buen Aire backend
   * Mac OSx & Linux - It should already be installed    
   * TODO: Windows users will have to get into docker to use this 
 
+TODO: Update Archtiure Diagram
 ## System Architecture
 ![buen_air_transparent](https://user-images.githubusercontent.com/49543713/112903316-ce42ab00-9093-11eb-9852-2bc323043616.png)
-## TODO: How to use Docker
 
+TODO: Update Archtiure Diagram
 ## Deploying The Buen Aie
 ![deployment_buen_air_transparent](https://user-images.githubusercontent.com/49543713/112903355-dbf83080-9093-11eb-9661-bec0dd72caee.png)
 
