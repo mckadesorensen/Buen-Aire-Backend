@@ -26,7 +26,7 @@ TODO: Update Archtiure Diagram
 ## Deploying The Buen Aie
 ![deployment_buen_air_transparent](https://user-images.githubusercontent.com/49543713/112903355-dbf83080-9093-11eb-9661-bec0dd72caee.png)
 
-The diagram above is a overview of the deployment process. The `Makefile` does most of the heavy lifting.
+The diagram above is a overview of the deployment process. The [Makefile](https://github.com/mckadesorensen/Buen-Aire-Backend/blob/main/Makefile) does most of the heavy lifting.
 
 1. In the terminal navigate to the `Buen-Aire-Backend` folder and run the following command to build the `Docker image`
 ```Terminal
