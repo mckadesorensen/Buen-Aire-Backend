@@ -3,7 +3,6 @@ This repo contains the code for the Buen Aire backend
 ## Table of Contents: 
 * [Buen-Aire-Backend required installations]()
 * [Buen-Aire-Frontend Repo](https://github.com/mckadesorensen/Buen-Aire-Frontend)
-  * [Github Repo](https://github.com/mckadesorensen/Buen-Aire-Frontend)
 * [System Architecture](#system-architecture) - Components of Buen-Aire-Backend
 * [Deploying The Backend](#Deploying-The-Buen-Aie)
 
